@@ -234,8 +234,8 @@ const Products = () => {
             </Card>
           ))}
         </div>
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 };
