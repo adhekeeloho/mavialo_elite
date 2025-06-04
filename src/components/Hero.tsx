@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "./ui/button";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 
@@ -24,6 +25,7 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+           <Link href="products">
             <Button 
               size="lg" 
               className="bg-amber-900 hover:bg-amber-800 text-white px-8 py-4 text-lg rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
@@ -32,7 +34,8 @@ const Hero = () => {
               Shop Collection
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            
+            </Link>
+            <Link href="about_us">
             <Button 
               variant="outline" 
               size="lg"
@@ -40,6 +43,7 @@ const Hero = () => {
             >
               Our Story
             </Button>
+            </Link>
           </div>
           
           {/* Hero Image Placeholder */}

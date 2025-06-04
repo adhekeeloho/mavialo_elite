@@ -1,144 +1,48 @@
-"use client"
+"use client";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Briefcase, Laptop, ShoppingCart, Star, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import supabase from "../../config/supabase";
 
+interface Product {
+  id: number;
+  title: string;
+  tag: string;
+  description: string;
+  rating: number;
+  review: string;
+  price: number;
+}
 const Products = () => {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filterTerm, setFilterTerm] = useState("");
-  const products = [
-    {
-      name: "Executive Briefcase",
-      price: "$449",
-      originalPrice: "$599",
-      rating: 4.9,
-      reviews: 127,
-      image:
-        "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
-      badge: "Bestseller",
-    },
-    {
-      name: "Premium Laptop Sleeve",
-      price: "$189",
-      originalPrice: "$249",
-      rating: 4.8,
-      reviews: 89,
-      image:
-        "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop",
-      badge: "New",
-    },
-    {
-      name: "Minimalist Wallet",
-      price: "$129",
-      originalPrice: "$169",
-      rating: 4.9,
-      reviews: 203,
-      image:
-        "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=400&h=400&fit=crop",
-      badge: "Limited",
-    },
-    {
-      name: "Executive Briefcase",
-      price: "$449",
-      originalPrice: "$599",
-      rating: 4.9,
-      reviews: 127,
-      image:
-        "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
-      badge: "Bestseller",
-    },
-    {
-      name: "Premium Laptop Sleeve",
-      price: "$189",
-      originalPrice: "$249",
-      rating: 4.8,
-      reviews: 89,
-      image:
-        "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop",
-      badge: "New",
-    },
-    {
-      name: "Minimalist Wallet",
-      price: "$129",
-      originalPrice: "$169",
-      rating: 4.9,
-      reviews: 203,
-      image:
-        "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=400&h=400&fit=crop",
-      badge: "Limited",
-    },
-    {
-      name: "Executive Briefcase",
-      price: "$449",
-      originalPrice: "$599",
-      rating: 4.9,
-      reviews: 127,
-      image:
-        "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
-      badge: "Bestseller",
-    },
-    {
-      name: "Premium Laptop Sleeve",
-      price: "$189",
-      originalPrice: "$249",
-      rating: 4.8,
-      reviews: 89,
-      image:
-        "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop",
-      badge: "New",
-    },
-    {
-      name: "Minimalist Wallet",
-      price: "$129",
-      originalPrice: "$169",
-      rating: 4.9,
-      reviews: 203,
-      image:
-        "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=400&h=400&fit=crop",
-      badge: "Limited",
-    },
-    {
-      name: "Executive Briefcase",
-      price: "$449",
-      originalPrice: "$599",
-      rating: 4.9,
-      reviews: 127,
-      image:
-        "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop",
-      badge: "Bestseller",
-    },
-    {
-      name: "Premium Laptop Sleeve",
-      price: "$189",
-      originalPrice: "$249",
-      rating: 4.8,
-      reviews: 89,
-      image:
-        "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop",
-      badge: "New",
-    },
-    {
-      name: "Minimalist Wallet",
-      price: "$129",
-      originalPrice: "$169",
-      rating: 4.9,
-      reviews: 203,
-      image:
-        "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=400&h=400&fit=crop",
-      badge: "Limited",
-    },
-  ];
+  const [productList, setProductList] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterTerm, setFilterTerm] = useState("");
 
-  const filteredProducts = products.filter((product) => {
-    const productName = product.name.toLowerCase();
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, error } = await supabase.from('products').select();
+      if (error) console.error(error);
+      else setProductList(data as Product[]);
+    };
+    fetchProducts();
+  }, []);
+  
+  console.log(productList.length > 0 ? productList : "No products found");
+
+  console.log(productList, "data")
+  const filteredProducts = productList.filter((product) => {
+    const productName = product.title?.toLowerCase() || "";
+    const productTag = product.tag?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
     const filter = filterTerm.toLowerCase();
     return (
-      (filter === "" || product.badge.toLowerCase() === filter) &&
+      (filter === "" || productTag === filter) &&
       (search === "" || productName.includes(search))
     );
   });
@@ -178,21 +82,21 @@ const Products = () => {
           </div>
         </div>
         <div className="grid md:grid-cols-3 gap-8 mb-12">
-        {filteredProducts.map((product, index) => (
+          {filteredProducts.map((product, index) => (
             <Card
               key={index}
               className="group hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-0 shadow-lg overflow-hidden bg-stone-50"
             >
               <div className="relative overflow-hidden ">
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src="../../../public/globe.svg"
+                  alt={product.title}
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                 <Badge className="absolute top-4 left-4 bg-amber-900 text-white hover:bg-amber-800">
-                  {product.badge}
+                  {product.tag}
                 </Badge>
 
                 <Button
@@ -205,7 +109,7 @@ const Products = () => {
 
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold text-amber-950 mb-2">
-                  {product.name}
+                  {product.title}
                 </h3>
 
                 <div className="flex items-center mb-3">
@@ -216,7 +120,7 @@ const Products = () => {
                     </span>
                   </div>
                   <span className="text-sm text-amber-700">
-                    ({product.reviews} reviews)
+                    ({product.review} reviews)
                   </span>
                 </div>
 
@@ -226,7 +130,7 @@ const Products = () => {
                       {product.price}
                     </span>
                     <span className="text-lg text-gray-500 line-through">
-                      {product.originalPrice}
+                      {product.price}
                     </span>
                   </div>
                 </div>
