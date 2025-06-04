@@ -99,10 +99,9 @@ export const useAdminData = () => {
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
       const filePath = `product-images/${fileName}`;
 
-      // FIX: Use selectedImage (your state variable) instead of selectedFile
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("product-images")
-        .upload(filePath, selectedImage, { // <--- Changed selectedFile to selectedImage
+        .upload(filePath, selectedImage, { 
           cacheControl: "3600",
           upsert: false,
         });
